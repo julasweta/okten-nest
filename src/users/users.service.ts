@@ -1,14 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async create(userDto: CreateUserDto) {
+    const userEmail = userDto.email.trim(); // перевіряємо пропуски
+    const findUser = await this.userRepository.findOne({
+      // перевіряємо чи є вже такий юзер
+      where: { email: userEmail },
+    });
+    if (findUser) {
+      throw new HttpException('User already exist', HttpStatus.BAD_REQUEST);
+    }
     try {
-      console.log(createUserDto);
-    } catch (e) {
-      console.log(e);
+      const newUser = this.userRepository.create(userDto);
+      if (!userDto.status) {
+        //на етапі створення якщо немає в юзера міста, додємо йому місто, або дописуємо токени
+        newUser.status = true;
+      }
+      return this.userRepository.save(newUser);
+    } catch (err) {
+      throw new HttpException('Create user failed', HttpStatus.BAD_REQUEST);
     }
   }
 

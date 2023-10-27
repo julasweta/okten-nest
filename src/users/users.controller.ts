@@ -12,17 +12,24 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ResponseCreateUser } from '../entities/response.user.interface';
 
+@ApiTags('Users') // Додайте декоратор тут
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiResponse({ status: HttpStatus.CREATED, type: ResponseCreateUser })
   @Post()
   async create(@Body() body: CreateUserDto, @Res() res: any) {
-    {
+    try {
+      const newUser = await this.usersService.create(body);
+      return res.status(HttpStatus.CREATED).json(newUser);
+    } catch (error) {
       return res
-        .status(HttpStatus.CREATED)
-        .json(this.usersService.create(body));
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
     }
   }
 
