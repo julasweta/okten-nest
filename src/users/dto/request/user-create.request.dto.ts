@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsEmail,
@@ -8,29 +8,26 @@ import {
   IsString,
 } from 'class-validator';
 
-//дані які приходять з запиту
 export class CreateUserDto {
-  @ApiProperty()
+  @Transform(({ value }) => value.trim())
   @IsString()
   userName: string;
 
-  @ApiProperty({ required: true, example: 'userTeast@gamil.com' })
+  @Transform(({ value }) => value.trim())
   @IsString()
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ required: false, example: 'Lviv' })
+  @Transform(({ value }) => value.trim())
   @IsOptional()
   @IsString()
   city: string;
 
-  @ApiProperty()
   @IsNumber()
   @IsOptional()
   age: number;
 
-  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;

@@ -1,47 +1,49 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  BadRequestException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto/request/user-create.request.dto';
+import { UpdateUserDto } from './dto/request/user-update.request.dto';
 import { UserRepository } from './user.repository';
+import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async create(userDto: CreateUserDto) {
-    const userEmail = userDto.email.trim(); // перевіряємо пропуски
-    const findUser = await this.userRepository.findOne({
-      // перевіряємо чи є вже такий юзер
-      where: { email: userEmail },
+  async createUser(userData: CreateUserDto) {
+    const findUser = await this.userRepository.findOneBy({
+      email: userData.email,
     });
     if (findUser) {
-      throw new HttpException('User already exist', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('User already exist');
     }
-    try {
-      const newUser = this.userRepository.create(userDto);
-      if (!userDto.status) {
-        //на етапі створення якщо немає в юзера міста, додємо йому місто, або дописуємо токени
-        newUser.status = true;
-      }
-      return this.userRepository.save(newUser);
-    } catch (err) {
-      throw new HttpException('Create user failed', HttpStatus.BAD_REQUEST);
+    const newUser = this.userRepository.create(userData);
+    if (!userData.status) {
+      //на етапі створення додаємо дані або дописуємо токени
+      newUser.status = true;
     }
+    return this.userRepository.save(newUser);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async getUserById(id: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: id });
+    if (!user) {
+      throw new UnprocessableEntityException('User not found');
+    }
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findAll(): Promise<any> {
+    return this.userRepository.count();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update('age', updateUserDto);
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} user`;
   }
 }

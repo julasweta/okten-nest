@@ -1,20 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import * as path from 'path';
+
 import { CustomConfigModule } from './config/config.module';
 import { CustomConfigService } from './config/config.service';
 import { UsersModule } from './users/users.module';
-import { UserEntity } from './entities/user.entity';
 
 @Module({
   imports: [
     CustomConfigModule,
     TypeOrmModule.forRootAsync({
-      //підключення до бази данних
       imports: [CustomConfigModule],
       useFactory: (customConfigService: CustomConfigService) => {
-        console.log(UserEntity.prototype);
         return {
           type: 'postgres',
           host: customConfigService.db_host,
@@ -23,14 +20,16 @@ import { UserEntity } from './entities/user.entity';
           password: customConfigService.db_password,
           database: customConfigService.db_database,
           synchronize: true,
-          entities: [UserEntity],
+          entities: [
+            path.join(__dirname, 'entities', '**', '*.entity{.ts,.js}'),
+          ],
         };
       },
       inject: [CustomConfigService],
     }),
     UsersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

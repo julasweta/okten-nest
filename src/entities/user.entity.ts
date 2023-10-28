@@ -14,7 +14,7 @@ export class UserEntity extends CreatedUpdatedModel {
   email: string;
 
   @Column({ type: 'text', nullable: false })
-  city: string;
+  city?: string;
 
   @Column({ type: 'int', nullable: false })
   age: number;

@@ -1,16 +1,22 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
+
   //swagger
   const config = new DocumentBuilder()
-    .setTitle('Okten-Nest')
-    .setDescription('Bonus nest js Api example')
+    .setTitle('OktenNest')
+    .setDescription('Description Project')
     .setVersion('1.0.')
     .addTag('march-2023')
     .build();
