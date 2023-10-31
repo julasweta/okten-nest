@@ -4,7 +4,8 @@ import * as path from 'path';
 
 import { CustomConfigModule } from './config/config.module';
 import { CustomConfigService } from './config/config.service';
-import { UsersModule } from './users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -21,13 +22,14 @@ import { UsersModule } from './users/users.module';
           database: customConfigService.db_database,
           synchronize: true,
           entities: [
-            path.join(__dirname, 'entities', '**', '*.entity{.ts,.js}'),
+            path.join(__dirname, '**', 'entities', '**', '*.entity{.ts,.js}'),
           ],
         };
       },
       inject: [CustomConfigService],
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

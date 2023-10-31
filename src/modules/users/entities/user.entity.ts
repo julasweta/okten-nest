@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { CreatedUpdatedModel } from './comon/create-update.model';
+
+import { CreatedUpdatedModel } from '../../../entities/comon/create-update.model';
 
 @Entity('users')
 // users назва бази

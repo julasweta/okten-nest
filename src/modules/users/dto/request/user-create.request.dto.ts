@@ -9,20 +9,20 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => value.trim().toLowerCase().replace(/\s/g, ''))
   @IsString()
   userName: string;
 
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => value.trim().toLowerCase().replace(/\s/g, ''))
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  readonly email: string;
 
   @Transform(({ value }) => value.trim())
-  @IsOptional()
+  @IsOptional() // якщо не обовязковий параметр і плюс знак ?
   @IsString()
-  city: string;
+  city?: string;
 
   @IsNumber()
   @IsOptional()

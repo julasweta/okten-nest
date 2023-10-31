@@ -9,7 +9,12 @@ export class CustomConfigService {
     @Inject(configuration.KEY)
     private readonly configs: ConfigType<typeof configuration>,
   ) {}
-
+  get app_port(): number {
+    return this.configs.app_port;
+  }
+  get app_host(): string {
+    return this.configs.app_host;
+  }
   get db_host(): string {
     return this.configs.db_host;
   }
