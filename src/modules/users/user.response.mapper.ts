@@ -12,6 +12,7 @@ export class UserResponseMapper {
       age: data.age,
       status: data.status,
       createdAt: data.createdAt,
+      password: data.password,
     };
   }
   static toUpdateRes(data: Partial<UpdateUserDto>): UpdateUserDto {

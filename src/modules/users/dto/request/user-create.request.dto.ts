@@ -15,6 +15,10 @@ export class CreateUserDto {
 
   @Transform(({ value }) => value.trim().toLowerCase().replace(/\s/g, ''))
   @IsString()
+  password: string;
+
+  @Transform(({ value }) => value.trim().toLowerCase().replace(/\s/g, ''))
+  @IsString()
   @IsEmail()
   @IsNotEmpty()
   readonly email: string;

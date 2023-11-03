@@ -5,7 +5,11 @@ import {
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 
+//import * as bcrypt from 'bcrypt';
+import { AuthService } from '../auth/auth.service';
+import { AuthLoginRequestDto } from '../auth/dto/request/auth-login-request.dto';
 import { CreateUserDto } from './dto/request/user-create.request.dto';
 import { UserListQueryRequestDto } from './dto/request/user-list-query.request.dto';
 import { UpdateUserDto } from './dto/request/user-update.request.dto';
@@ -16,7 +20,37 @@ import { UserResponseMapper } from './user.response.mapper';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly authService: AuthService,
+    @InjectRedisClient() private redisClient: RedisClient,
+  ) {}
+
+  async login(data: AuthLoginRequestDto) {
+    const findUser = await this.userRepository.findOne({
+      where: { email: data.email },
+    });
+    if (!findUser) {
+      throw new HttpException(
+        'Email or password is not correct',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    if (!(await this.authService.validateUser(data))) {
+      throw new HttpException(
+        'Email or password is not correct',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const token = await this.authService.createToken({
+      id: findUser.id,
+    });
+
+    await this.redisClient.setEx(token, 10000, token);
+    return { token };
+  }
 
   async getdAll(query: UserListQueryRequestDto): Promise<any> {
     return await this.userRepository.getAllUsers(query);

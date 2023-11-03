@@ -5,7 +5,7 @@ import * as path from 'path';
 import { CustomConfigModule } from './config/config.module';
 import { CustomConfigService } from './config/config.service';
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
+import { UserModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { UsersModule } from './modules/users/users.module';
       },
       inject: [CustomConfigService],
     }),
-    UsersModule,
+    UserModule,
     AuthModule,
   ],
   controllers: [],
