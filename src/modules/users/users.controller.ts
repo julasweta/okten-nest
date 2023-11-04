@@ -12,6 +12,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { CityDecorator } from '../../common/decorators/city.decorator';
+import { CityEnum } from '../../common/enum/city.enum';
+import { CityGuard } from '../../common/guards/city.guard';
+import { LogoutGuard } from '../../common/guards/logout.guard';
 import { AuthLoginRequestDto } from '../auth/dto/request/auth-login-request.dto';
 import { CreateUserDto } from './dto/request/user-create.request.dto';
 import { UserListQueryRequestDto } from './dto/request/user-list-query.request.dto';
@@ -32,9 +36,17 @@ export class UsersController {
     return await this.usersService.login(body);
   }
 
+  @ApiOperation({ summary: 'Logout' })
+  @UseGuards(AuthGuard(), LogoutGuard)
+  @Post('logout')
+  async logout(): Promise<any> {
+    return 'Exit from account';
+  }
+
   @ApiOperation({ summary: 'Get all users' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @CityDecorator(CityEnum.LVIV, CityEnum.ODESA)
+  @UseGuards(AuthGuard(), CityGuard)
   @Get()
   async getdAll(@Query() query: UserListQueryRequestDto): Promise<any> {
     const result = await this.usersService.getdAll(query);
