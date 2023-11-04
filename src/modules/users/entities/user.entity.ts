@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CreatedUpdatedModel } from '../../../entities/comon/create-update.model';
+import { carEntity } from '../../cars/entities/car.entity';
 
 @Entity('users')
 // users назва бази
@@ -25,4 +26,7 @@ export class UserEntity extends CreatedUpdatedModel {
 
   @Column({ type: 'boolean', nullable: false })
   status: boolean;
+
+  @OneToMany(() => carEntity, (entity) => entity.user)
+  cars: carEntity;
 }

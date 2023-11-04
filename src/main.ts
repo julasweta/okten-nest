@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { SwaggerHelper } from './common/helpers/swagger.helper';
 import { CustomConfigService } from './config/config.service';
 
 async function bootstrap() {
@@ -26,6 +27,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  SwaggerHelper.setDefaultResponses(document);
 
   await app.listen(appConfig.app_port, () => {
     Logger.log(`http://${appConfig.app_host}:${appConfig.app_port}/api`, 'Doc');

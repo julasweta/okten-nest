@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   Param,
   Post,
   Put,
@@ -11,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthLoginRequestDto } from '../auth/dto/request/auth-login-request.dto';
 import { CreateUserDto } from './dto/request/user-create.request.dto';
@@ -34,6 +33,7 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Get all users' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @Get()
   async getdAll(@Query() query: UserListQueryRequestDto): Promise<any> {
@@ -51,8 +51,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get user byId' })
   @UseGuards(AuthGuard())
   @Get('user/:id')
-  async getUserById(@Param('id') id: string, @Headers() headers: any) {
-    console.log(headers);
+  async getUserById(@Param('id') id: string) {
     const result = await this.usersService.getUserById(id);
     return UserResponseMapper.toCreatesRes(result);
   }

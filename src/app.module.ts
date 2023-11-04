@@ -5,6 +5,7 @@ import * as path from 'path';
 import { CustomConfigModule } from './config/config.module';
 import { CustomConfigService } from './config/config.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { CarsModule } from './modules/cars/cars.module';
 import { UserModule } from './modules/users/users.module';
 
 @Module({
@@ -30,6 +31,7 @@ import { UserModule } from './modules/users/users.module';
     }),
     UserModule,
     AuthModule,
+    CarsModule,
   ],
   controllers: [],
   providers: [],

@@ -1,21 +1,11 @@
-import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
 
-export class UpdateUserDto {
-  id?: string;
-  @Transform(({ value }) => value.trim())
-  @IsString()
-  @IsOptional()
-  userName?: string;
+import { UserBaseDto } from '../user.base.dto';
 
-  @Transform(({ value }) => value.trim())
-  @IsString()
-  @IsOptional()
-  city?: string;
-
-  @IsNumber()
-  @IsOptional()
-  age?: number;
-  email?: string;
-  status?: boolean;
-}
+export class UpdateUserDto extends PickType(UserBaseDto, [
+  'userName',
+  'city',
+  'age',
+  'email',
+  'status',
+]) {}
